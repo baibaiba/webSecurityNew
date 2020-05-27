@@ -13,6 +13,9 @@ import java.util.Map;
 
 @Service
 public class SecurityServiceImpl implements SecurityService {
+
+
+
     private static Map<String, LoginUser> map = new HashMap<>();
 
     private static List<LoginUser> loginUsers = new ArrayList<>();
@@ -20,6 +23,8 @@ public class SecurityServiceImpl implements SecurityService {
     static {
         map.put("", new LoginUser("tony", "123456"));
         map.put("", new LoginUser("tom", "123456"));
+
+
     }
 
     static {
