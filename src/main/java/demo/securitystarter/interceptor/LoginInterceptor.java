@@ -1,8 +1,6 @@
 package demo.securitystarter.interceptor;
 
-import demo.securitystarter.dto.Base;
-import demo.securitystarter.service.SecurityTestService;
-import demo.securitystarter.util.JsonUtil;
+import demo.securitystarter.service.SecurityService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -10,14 +8,13 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 
 public class LoginInterceptor implements HandlerInterceptor {
-    private SecurityTestService securityTestService;
+    private SecurityService securityTestService;
 
     private static final String COOKIE_NAME_TOKEN = "cookie";
 
-    public LoginInterceptor(SecurityTestService securityTestService) {
+    public LoginInterceptor(SecurityService securityTestService) {
         this.securityTestService = securityTestService;
     }
 
@@ -38,7 +35,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
             // 如果请求参数及cookie都没有带我们需要的值
             // 调整登录页
-            response.getOutputStream().write(JsonUtil.parseObjToJson(new Base<>(-1, "无cookie")).getBytes(StandardCharsets.UTF_8));
+            response.sendRedirect("/login");
             return false;
         }
 

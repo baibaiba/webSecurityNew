@@ -13,8 +13,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
-@Component
 @Aspect
+@Component
 public class RoleAuthorityAspect {
 
     @Pointcut("execution(* demo.securitystarter.controller..*.*(..)))")
@@ -33,10 +33,6 @@ public class RoleAuthorityAspect {
          */
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        String token = request.getHeader("Authentication");
-//        if (StringUtils.isEmpty(token)) {
-//            throw new RuntimeException("非法请求，无效token");
-//        }
 
         /**
          * 获取注解的值，并进行权限验证:

@@ -2,8 +2,7 @@ package demo.securitystarter.configuration;
 
 import demo.securitystarter.interceptor.LoginInterceptor;
 import demo.securitystarter.interceptor.SecurityUserArgumentResolver;
-import demo.securitystarter.service.SecurityTestService;
-import org.springframework.beans.factory.annotation.Autowired;
+import demo.securitystarter.service.SecurityService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -13,9 +12,9 @@ import java.util.List;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
-    private final SecurityTestService securityTestService;
+    private final SecurityService securityTestService;
 
-    public WebConfiguration(SecurityTestService securityTestService) {
+    public WebConfiguration(SecurityService securityTestService) {
         this.securityTestService = securityTestService;
     }
 
@@ -26,7 +25,7 @@ public class WebConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor(securityTestService)).addPathPatterns("/**");
+        registry.addInterceptor(new LoginInterceptor(securityTestService)).excludePathPatterns("/login");
     }
 
     /**

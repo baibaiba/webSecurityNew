@@ -2,9 +2,7 @@ package demo.securitystarter.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
 import demo.securitystarter.annotation.SecurityUser;
-import demo.securitystarter.service.SecurityTestService;
 import demo.securitystarter.util.JsonUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.support.WebDataBinderFactory;
