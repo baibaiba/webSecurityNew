@@ -2,6 +2,7 @@ package demo.securitystarter.controller;
 
 import demo.securitystarter.annotation.HasRole;
 import demo.securitystarter.annotation.SecurityUser;
+import demo.securitystarter.dto.Base;
 import demo.securitystarter.dto.LoginUser;
 import demo.securitystarter.service.SecurityTestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,13 @@ public class SecurityTestController {
      */
     @HasRole(name = HasRole.Role.ADMIN)
     @GetMapping("roles")
-    public String get() {
-        return "";
+    public Base get() {
+        return new Base(1, "success");
     }
 
     @PostMapping("list")
-    public void list(@SecurityUser LoginUser loginUser) {
+    public Base list(@SecurityUser LoginUser loginUser) {
+        return new Base<>(1, "success", loginUser);
     }
 
     @RequestMapping("logout")

@@ -1,13 +1,26 @@
 package demo.securitystarter.interceptor;
 
+import demo.securitystarter.dto.Base;
+import demo.securitystarter.service.SecurityTestService;
+import demo.securitystarter.util.JsonUtil;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 
 public class LoginInterceptor implements HandlerInterceptor {
+    private SecurityTestService securityTestService;
+
+    private static final String COOKIE_NAME_TOKEN = "cookie";
+
+    public LoginInterceptor(SecurityTestService securityTestService) {
+        this.securityTestService = securityTestService;
+    }
+
     /**
      * 之前执行
      *
@@ -20,22 +33,22 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 这里是取出Cookie
-        Cookie[] cookies = request.getCookies();
-
-        // 判断Cookie是否为空
-        if ((cookies != null)) {
-            //遍历Cookie判断有没有对应的name
-            for (Cookie cookie : cookies) {
-                //有就直接return true
-                if (cookie.getName().equals("loginname")) {
-                    return true;
-                }
-            }
+        String paramToken = request.getHeader(COOKIE_NAME_TOKEN);
+        String cookieToken = getCookieValue(request);
+        if (StringUtils.isEmpty(cookieToken) && StringUtils.isEmpty(paramToken)) {
+            // 如果请求参数及cookie都没有带我们需要的值
+            // 调整登录页
+            response.getOutputStream().write(JsonUtil.parseObjToJson(new Base<>(-1, "无cookie")).getBytes(StandardCharsets.UTF_8));
+            return false;
         }
+
+        String token = StringUtils.isEmpty(paramToken) ? cookieToken : paramToken;
+        Object byToken = securityTestService.getByToken(response, token);
+
         //request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request, response);
         //response.sendError(407,"无权限");
         // false不会继续向后执行
-        return false;
+        return true;
     }
 
     @Override
@@ -46,5 +59,26 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
+    }
+
+    /**
+     * 从cookie中 查找需要的cookie值
+     *
+     * @param request
+     * @return
+     */
+    private String getCookieValue(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(LoginInterceptor.COOKIE_NAME_TOKEN)) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 }

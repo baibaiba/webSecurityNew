@@ -7,7 +7,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -48,9 +47,11 @@ public class RoleAuthorityAspect {
          */
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         HasRole annotation = method.getAnnotation(HasRole.class);
-        HasRole.Role role = annotation.name();
-        if (!role.equals(HasRole.Role.ADMIN)) {
-            throw new Exception("您无权限");
+        if (annotation != null) {
+            HasRole.Role role = annotation.name();
+            if (!role.equals(HasRole.Role.ADMIN)) {
+                throw new Exception("您无权限");
+            }
         }
 
         return joinPoint.proceed();
