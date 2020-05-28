@@ -29,6 +29,7 @@ public class LoginInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        System.out.println(request.getRequestURI());
         // 这里是取出Cookie
         String paramToken = request.getHeader(COOKIE_NAME_TOKEN);
         String cookieToken = getCookieValue(request);
@@ -36,6 +37,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             // 如果请求参数及cookie都没有带我们需要的值
             // 调整登录页
             response.sendRedirect("/login");
+            System.out.println("无cookie");
             return false;
         }
 

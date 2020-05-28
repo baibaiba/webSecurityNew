@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 @Component
 public class RoleAuthorityAspect {
 
-    @Pointcut("execution(* demo.securitystarter.controller..*.*(..)))")
+    @Pointcut("execution(* demo.securitystarter.controller.SecurityTestController..*.*(..)))")
     public void pointCut() {
     }
 

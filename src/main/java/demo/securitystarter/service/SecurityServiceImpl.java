@@ -5,6 +5,7 @@ import demo.securitystarter.dto.LoginUser;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,14 +40,21 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public Base<String> login(LoginUser loginUser, HttpServletResponse response) throws IOException {
+    public Base<String> login(LoginUser loginUser, HttpSession session) throws IOException {
         LoginUser loginUser1 = loginUsers.stream().filter(item -> item.getUsername().equals(loginUser.getUsername())).findFirst().orElse(null);
         if (loginUser1 == null) {
             return new Base<>(0, "无效用户");
         }
 
+        LoginUser loginUser2 = map.get(session.getId());
+        if (loginUser2 != null && loginUser2.getUsername().equals(loginUser.getUsername())) {
+            return new Base<>(2, "success");
+        }
+
         if (loginUser.getPassword().equals(loginUser1.getPassword())) {
-            response.sendRedirect("/index");
+            // 保存用户session,实际
+            map.put(session.getId(), loginUser1);
+            return new Base<>(1, "success");
         }
 
         return new Base<>(0, "账号或密码错误");

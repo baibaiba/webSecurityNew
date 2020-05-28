@@ -4,10 +4,11 @@ import demo.securitystarter.dto.Base;
 import demo.securitystarter.dto.LoginUser;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public interface SecurityService {
     Object getByToken(HttpServletResponse response, String token);
 
-    Base<String> login(LoginUser loginUser, HttpServletResponse response) throws IOException;
+    Base<String> login(LoginUser loginUser, HttpSession session) throws IOException;
 }

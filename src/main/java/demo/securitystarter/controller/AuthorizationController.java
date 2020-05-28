@@ -1,6 +1,7 @@
 package demo.securitystarter.controller;
 
 import demo.securitystarter.dto.AuthorizationResponse;
+import demo.securitystarter.dto.Authorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -14,7 +15,15 @@ import java.text.MessageFormat;
 
 @Controller
 public class AuthorizationController {
+    // 按照下面规则拼接请求授权地址，将会引导用户进行账户登录。登录后跳转到授权页面进行授权。
     // 用户授权接口，同意授权返回true，否则false
+    public String authorize(Authorize authorize) {
+        // 第一步应该是
+        // 生成授权code
+        String code = "";
+        return authorize.getRedirect_uri() + "?code=" + code;
+    }
+
 
     // 用户怎样授权呢？
 
