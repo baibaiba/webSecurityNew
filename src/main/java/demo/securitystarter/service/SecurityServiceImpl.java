@@ -1,7 +1,7 @@
 package demo.securitystarter.service;
 
 import demo.securitystarter.dto.Base;
-import demo.securitystarter.dto.LoginUser;
+import demo.securitystarter.dto.User;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,20 +17,20 @@ public class SecurityServiceImpl implements SecurityService {
 
 
 
-    private static Map<String, LoginUser> map = new HashMap<>();
+    private static Map<String, User> map = new HashMap<>();
 
-    private static List<LoginUser> loginUsers = new ArrayList<>();
+    private static List<User> users = new ArrayList<>();
 
     static {
-        map.put("", new LoginUser("tony", "123456"));
-        map.put("", new LoginUser("tom", "123456"));
+        map.put("", new User("tony", "123456"));
+        map.put("", new User("tom", "123456"));
 
 
     }
 
     static {
-        loginUsers.add(new LoginUser("tony", "123456"));
-        loginUsers.add(new LoginUser("tom", "654321"));
+        users.add(new User("tony", "123456"));
+        users.add(new User("tom", "654321"));
     }
 
     @Override
@@ -40,20 +40,20 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public Base<String> login(LoginUser loginUser, HttpSession session) throws IOException {
-        LoginUser loginUser1 = loginUsers.stream().filter(item -> item.getUsername().equals(loginUser.getUsername())).findFirst().orElse(null);
-        if (loginUser1 == null) {
+    public Base<String> login(User user, HttpSession session) throws IOException {
+        User user1 = users.stream().filter(item -> item.getUsername().equals(user.getUsername())).findFirst().orElse(null);
+        if (user1 == null) {
             return new Base<>(0, "无效用户");
         }
 
-        LoginUser loginUser2 = map.get(session.getId());
-        if (loginUser2 != null && loginUser2.getUsername().equals(loginUser.getUsername())) {
+        User user2 = map.get(session.getId());
+        if (user2 != null && user2.getUsername().equals(user.getUsername())) {
             return new Base<>(2, "success");
         }
 
-        if (loginUser.getPassword().equals(loginUser1.getPassword())) {
+        if (user.getPassword().equals(user1.getPassword())) {
             // 保存用户session,实际
-            map.put(session.getId(), loginUser1);
+            map.put(session.getId(), user1);
             return new Base<>(1, "success");
         }
 

@@ -1,24 +1,19 @@
 package demo.securitystarter.configuration;
 
-import demo.securitystarter.interceptor.LoginInterceptor;
+import demo.securitystarter.interceptor.client.AuthInterceptor;
+import demo.securitystarter.interceptor.client.ClientLoginInterceptor;
+import demo.securitystarter.interceptor.authserver.LoginInterceptor;
+import demo.securitystarter.interceptor.authserver.OauthInterceptor;
 import demo.securitystarter.interceptor.SecurityUserArgumentResolver;
-import demo.securitystarter.service.SecurityService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
-    private final SecurityService securityTestService;
-
-    public WebConfiguration(SecurityService securityTestService) {
-        this.securityTestService = securityTestService;
-    }
-
     /**
      * 注册拦截器，对请求做拦截，它执行在HandlerAdapter（真正处理请求）前后
      *
@@ -26,15 +21,12 @@ public class WebConfiguration implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        String[] patterns = new String[]{"/", "/login", "/**/login",
-                "/*.html",
-                "/favicon.ico",
-                "/**/*.html",
-                "/**/*.css",
-                "/**/*.js",
-                "/resources/**", "/static/**", "/error"};
-        registry.addInterceptor(new LoginInterceptor(securityTestService)).excludePathPatterns("/login", "/static/**"
-                , "/favicon.ico","/");
+        // 授权服务端
+        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/user/**", "/oauth2.0/authorizePage", "/oauth2.0/authorize");
+        registry.addInterceptor(new OauthInterceptor()).addPathPatterns("/oauth2.0/authorize");
+        // 客户端
+        registry.addInterceptor(new ClientLoginInterceptor()).addPathPatterns("/user/**");
+        registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/clientLogin");
     }
 
     /**
@@ -45,11 +37,5 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new SecurityUserArgumentResolver());
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 将/static/**访问映射到classpath:/static/
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 }
