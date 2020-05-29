@@ -1,4 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -7,13 +7,59 @@
     <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>
-        body{
-            background: url("/img/5.jpg");
-        }
-    </style>
 </head>
 <body>
-
+<div>
+    <input type="button" onclick="admin()" value="管理员">
+</div>
+<div>
+    <input type="button" onclick="staff()" value="普通员工">
+</div>
+<div>
+    <input type="button" onclick="testBody()" value="RequestBody模拟演示">
+</div>
 </body>
+<script>
+    function admin() {
+        $.ajax({
+            url: "/api/admin",
+            type: "GET",
+            async: false,
+            success: function (data) {
+
+            }
+        });
+    }
+
+    function staff() {
+        $.ajax({
+            url: "/api/staff",
+            type: "GET",
+            async: false,
+            success: function (data) {
+
+            }
+        });
+    }
+
+    function testBody() {
+        $.ajax({
+            url: "/api/body",
+            type: "POST",
+            dataType: "json",
+            beforeSend: function(request) {
+                request.setRequestHeader("Content-Type", "application/json");
+            },
+            async: false,
+            data: JSON.stringify({
+                "username": "test",
+                "password": "123456"
+            }),
+            success: function (data) {
+
+            }
+        });
+    }
+
+</script>
 </html>

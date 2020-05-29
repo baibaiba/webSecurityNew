@@ -18,6 +18,7 @@ import java.util.Map;
  * 检查是否已经存在授权
  */
 public class OauthInterceptor extends HandlerInterceptorAdapter {
+    static int index = 0;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -42,24 +43,15 @@ public class OauthInterceptor extends HandlerInterceptorAdapter {
             params = params + "&client_id=" + clientIdStr + "&scope=" + scopeStr;
 
             //1. 查询是否存在授权信息
-//            AuthClientDetails clientDetails = authClientDetailsMapper.selectByClientId(clientIdStr);
-//            AuthScope scope = authScopeMapper.selectByScopeName(scopeStr);
-
-//            if(clientDetails == null){
-//            }
-//
-//            if(scope == null){
-//            }
-//
-//            if(!clientDetails.getRedirectUri().equals(redirectUri)){
-//            }
 
             //2. 查询用户给接入的客户端是否已经授权
-            AuthClientUser clientUser = new AuthClientUser();//authClientUserMapper.selectByClientId(clientDetails.getId(), user.getId(), scope.getId());
-            if (clientUser != null) {
+            AuthClientUser clientUser = null;
+            // 这里只是为了模拟所以使用了index变量
+            if (index == 1) {
                 return true;
             } else {
                 //如果没有授权，则跳转到授权页面
+                ++index;
                 response.sendRedirect(request.getContextPath() + "/oauth2.0/authorizePage" + params);
                 return false;
             }

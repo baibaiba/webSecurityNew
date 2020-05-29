@@ -1,23 +1,28 @@
 package demo.securitystarter.aspect;
 
 import demo.securitystarter.annotation.HasRole;
+import demo.securitystarter.constants.CommonConstants;
+import demo.securitystarter.dto.Base;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.lang.reflect.Method;
 
 @Aspect
 @Component
+@Order(99)
 public class RoleAuthorityAspect {
 
-    @Pointcut("execution(* demo.securitystarter.controller.UserInfoController..*.*(..)))")
+    @Pointcut("@annotation(demo.securitystarter.annotation.HasRole)")
     public void pointCut() {
     }
 
@@ -33,6 +38,13 @@ public class RoleAuthorityAspect {
          */
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
+        HttpSession session = request.getSession();
+        String accessToken = (String) session.getAttribute(CommonConstants.SESSION_ACCESS_TOKEN);
+        /**
+         * 解析token，获取用户角色信息
+         */
+        // 默认当前用户是管理员
+        HasRole.Role userRole = HasRole.Role.ADMIN;
 
         /**
          * 获取注解的值，并进行权限验证:
@@ -45,8 +57,8 @@ public class RoleAuthorityAspect {
         HasRole annotation = method.getAnnotation(HasRole.class);
         if (annotation != null) {
             HasRole.Role role = annotation.name();
-            if (!role.equals(HasRole.Role.ADMIN)) {
-                throw new Exception("您无权限");
+            if (!role.equals(userRole)) {
+                return new Base<>(0, "您无权限");
             }
         }
 

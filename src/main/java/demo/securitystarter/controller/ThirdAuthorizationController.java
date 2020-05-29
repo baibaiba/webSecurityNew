@@ -28,7 +28,6 @@ public class ThirdAuthorizationController {
     public ModelAndView authorize(HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(CommonConstants.SESSION_USER);
-
         //客户端ID
         String clientIdStr = request.getParameter("client_id");
         //权限范围
@@ -37,10 +36,8 @@ public class ThirdAuthorizationController {
         String redirectUri = request.getParameter("redirect_uri");
         //status，用于防止CSRF攻击（非必填）
         String status = request.getParameter("status");
-
         //生成Authorization Code
         String authorizationCode = "gwrut&234";
-
         String params = "?code=" + authorizationCode;
         if (!StringUtils.isEmpty(status)) {
             params = params + "&status=" + status;
@@ -52,14 +49,12 @@ public class ThirdAuthorizationController {
     @RequestMapping("/authorizePage")
     public ModelAndView authorizePage(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("authorize");
-
         //在页面同意授权后的回调地址
         String redirectUrl = request.getParameter("redirectUri");
         //客户端ID
         String clientId = request.getParameter("client_id");
         //权限范围
         String scope = request.getParameter("scope");
-
         if (!StringUtils.isEmpty(redirectUrl)) {
             HttpSession session = request.getSession();
             //将回调地址添加到session中
@@ -81,7 +76,6 @@ public class ThirdAuthorizationController {
     public Map<String, Object> agree(HttpServletRequest request) {
         Map<String, Object> result = new HashMap<>(2);
         HttpSession session = request.getSession();
-
         //客户端ID
         String clientIdStr = request.getParameter("client_id");
         //权限范围
@@ -89,14 +83,9 @@ public class ThirdAuthorizationController {
 
         if (!StringUtils.isEmpty(clientIdStr) && !StringUtils.isEmpty(scopeStr)) {
             User user = (User) session.getAttribute(CommonConstants.SESSION_USER);
-
             //1. 向数据库中保存授权信息
-//            boolean saveFlag = authorizationService.saveAuthClientUser(user.getId(), clientIdStr, scopeStr);
-
             //2. 返回给页面的数据
-//            if(saveFlag){
             result.put("code", 200);
-
             //授权成功之后的回调地址
             String redirectUrl = (String) session.getAttribute(CommonConstants.SESSION_AUTH_REDIRECT_URL);
             session.removeAttribute(CommonConstants.SESSION_AUTH_REDIRECT_URL);
@@ -104,9 +93,6 @@ public class ThirdAuthorizationController {
             if (!StringUtils.isEmpty(redirectUrl)) {
                 result.put("redirect_uri", redirectUrl);
             }
-//            }else{
-//                result.put("msg", "授权失败！");
-//            }
         } else {
             result.put("msg", "请求参数不能为空！");
         }

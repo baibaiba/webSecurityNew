@@ -1,6 +1,6 @@
 package demo.securitystarter.configuration;
 
-import demo.securitystarter.interceptor.client.AuthInterceptor;
+import demo.securitystarter.interceptor.client.ClientAuthInterceptor;
 import demo.securitystarter.interceptor.client.ClientLoginInterceptor;
 import demo.securitystarter.interceptor.authserver.LoginInterceptor;
 import demo.securitystarter.interceptor.authserver.OauthInterceptor;
@@ -26,7 +26,7 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(new OauthInterceptor()).addPathPatterns("/oauth2.0/authorize");
         // 客户端
         registry.addInterceptor(new ClientLoginInterceptor()).addPathPatterns("/user/**");
-        registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/clientLogin");
+        registry.addInterceptor(new ClientAuthInterceptor()).addPathPatterns("/clientLogin");
     }
 
     /**

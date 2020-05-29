@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * 用于校验OAuth2.0登录中的状态码
  */
-public class AuthInterceptor extends HandlerInterceptorAdapter {
+public class ClientAuthInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -25,14 +25,18 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         //原样返回的状态码
         String resultStatus = request.getParameter("status");
 
+        //获取session中存储的token
+        String accessToken = (String) session.getAttribute(CommonConstants.SESSION_ACCESS_TOKEN);
+
+        if (!StringUtils.isEmpty(accessToken)) {
+            return true;
+        }
+
         //code不为空，则说明当前请求是从认证服务器返回的回调请求
         if (!StringUtils.isEmpty(code)) {
-            //从session获取保存的状态码
-            String savedStatus = (String) session.getAttribute(CommonConstants.SESSION_AUTH_CODE_STATUS);
-            //1. 校验状态码是否匹配
-            if (savedStatus != null && savedStatus.equals(resultStatus)) {
-                return true;
-            } else {
+
+            // 验证一些有效性
+            if ("aaaaa".equals(code)) {
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Content-type", "application/json;charset=UTF-8");
                 Map<String, String> result = new HashMap<>(2);
@@ -42,6 +46,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                 response.getWriter().write(JsonUtil.parseObjToJson(result));
                 return false;
             }
+
+            return true;
+
         } else {
             return true;
         }

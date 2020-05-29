@@ -5,11 +5,9 @@ import demo.securitystarter.annotation.SecurityUser;
 import demo.securitystarter.dto.Base;
 import demo.securitystarter.dto.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(value = "api")
 public class UserInfoController {
     /**
@@ -18,13 +16,19 @@ public class UserInfoController {
      * @return
      */
     @HasRole(name = HasRole.Role.ADMIN)
-    @GetMapping("roles")
-    public Base get() {
+    @GetMapping("admin")
+    public Base admin() {
         return new Base(1, "success");
     }
 
-    @PostMapping("list")
-    public Base list(@SecurityUser User user) {
+    @HasRole(name = HasRole.Role.STAFF)
+    @GetMapping("staff")
+    public Base staff() {
+        return new Base(1, "success");
+    }
+
+    @PostMapping("body")
+    public Base body(@SecurityUser User user) {
         return new Base<>(1, "success", user);
     }
 }
